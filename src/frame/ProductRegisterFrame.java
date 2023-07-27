@@ -5,18 +5,32 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import entity.Product;
+import entity.ProductCategory;
+import entity.ProductColor;
+import repository.ProductCategoryRepository;
+import service.ProductCateogryService;
+import service.ProductColorService;
+import service.ProductService;
+import utils.CustomSwingComboBoxUtil;
+import utils.CustomSwingTextUtil;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ProductRegisterFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField productNameTextField;
 	private JTextField productPriceTextField;
-	private JTextField productColorTextField;
-	private JTextField productCategoryTextField;
 	private JButton registerSubmitButton;
 
 	/**
@@ -72,25 +86,63 @@ public class ProductRegisterFrame extends JFrame {
 		contentPane.add(productPriceTextField);
 		
 		JLabel productColorLabel = new JLabel("색상");
-		productColorLabel.setBounds(13, 135, 57, 31);
+		productColorLabel.setBounds(13, 134, 57, 31);
 		contentPane.add(productColorLabel);
 		
-		productColorTextField = new JTextField();
-		productColorTextField.setColumns(10);
-		productColorTextField.setBounds(98, 135, 325, 31);
-		contentPane.add(productColorTextField);
+		JComboBox colorComboBox = new JComboBox();
+		CustomSwingComboBoxUtil.setComboBoxModel(colorComboBox, ProductColorService.getInstance().getProductColorNameList());
+		colorComboBox.setBounds(98, 138, 324, 23);
+		contentPane.add(colorComboBox);
 		
-		JLabel productCategoryLabel = new JLabel("분류");
+		JLabel productCategoryLabel = new JLabel("카테고리");
 		productCategoryLabel.setBounds(13, 176, 57, 31);
 		contentPane.add(productCategoryLabel);
 		
-		productCategoryTextField = new JTextField();
-		productCategoryTextField.setColumns(10);
-		productCategoryTextField.setBounds(98, 176, 325, 31);
-		contentPane.add(productCategoryTextField);
+		JComboBox categoryComboBox = new JComboBox();
+		CustomSwingComboBoxUtil.setComboBoxModel(categoryComboBox, ProductCateogryService.getInstance().getProductCategoryNameList());
+		categoryComboBox.setBounds(98, 180, 324, 23);
+		contentPane.add(categoryComboBox);
 		
 		registerSubmitButton = new JButton("등록하기");
+		registerSubmitButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String productName = productNameTextField.getText();
+				if(CustomSwingTextUtil.isTextEmpty(contentPane, productName)) { return; } 
+				
+				String productPrice = productPriceTextField.getText();
+				if(CustomSwingTextUtil.isTextEmpty(contentPane, productPrice)) { return; }
+				
+				String productColorName = (String) colorComboBox.getSelectedItem();
+				if(CustomSwingTextUtil.isTextEmpty(contentPane, productColorName)) { return; }
+				
+				String productCategoryName = (String) categoryComboBox.getSelectedItem();
+				if(CustomSwingTextUtil.isTextEmpty(contentPane, productCategoryName)) { return; }
+				
+				Product product = Product.builder()
+						.productName(productName)
+						.productPrice(Integer.parseInt(productPrice))
+						.productColor(ProductColor.builder().productColorName(productColorName).build())
+						.productCategory(ProductCategory.builder().productCategoryName(productCategoryName).build())
+						.build();
+				
+				if(!ProductService.getInstance().registerProduct(product)) {
+					JOptionPane.showMessageDialog(contentPane, "상품등록 중 오류가 발생하였습니다.", "등록오류", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				JOptionPane.showMessageDialog(contentPane, "새로운 상품을 등록하였습니다.", "등록성공", JOptionPane.PLAIN_MESSAGE);
+				CustomSwingTextUtil.clearTextField(productNameTextField);
+				CustomSwingTextUtil.clearTextField(productPriceTextField);
+				colorComboBox.setSelectedIndex(0);
+				categoryComboBox.setSelectedIndex(0);
+			}
+		});
 		registerSubmitButton.setBounds(13, 219, 410, 30);
 		contentPane.add(registerSubmitButton);
+		
+		
+		
+
 	}
 }

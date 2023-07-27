@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import entity.ProductColor;
 import service.ProductColorService;
+import utils.CustomSwingTextUtil;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -70,7 +71,8 @@ public class ProductColorRegisterFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String productColorName = productColorNameTextField.getText();
-				if(isTextEmpty(productColorName)) { return; }
+				
+				if(CustomSwingTextUtil.isTextEmpty(contentPane, productColorName)) { return; }
 				if(ProductColorService.getInstance().isProductColorNameDuplicated(productColorName)) {
 					JOptionPane.showMessageDialog(contentPane, "이미 존재하는 색상명입니다.", "중복오류", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -85,24 +87,11 @@ public class ProductColorRegisterFrame extends JFrame {
 				}
 				
 				JOptionPane.showMessageDialog(contentPane, "새로운 색상을 등록하였습니다.", "등록성공", JOptionPane.PLAIN_MESSAGE);
-				clearTextField(productColorNameTextField);
+				CustomSwingTextUtil.clearTextField(productColorNameTextField);
+				
 			}
 		});
 		registerSubmitButton.setBounds(13, 102, 410, 30);
 		contentPane.add(registerSubmitButton);
-	}
-	
-	private boolean isTextEmpty(String str) {
-		if(str != null) {
-			if(!str.isBlank()) {
-				return false;
-			}
-		}
-		JOptionPane.showMessageDialog(contentPane, "내용을 입력하세요.", "입력오류", JOptionPane.ERROR_MESSAGE);
-		return true;
-	}
-	
-	private void clearTextField(JTextField textField) {
-		textField.setText("");
 	}
 }

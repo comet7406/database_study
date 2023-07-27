@@ -6,54 +6,54 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.cj.protocol.Resultset;
-
 import config.DBConnectionMgr;
+import entity.ProductCategory;
 import entity.ProductColor;
 
-public class ProductColorRepository {
+public class ProductCategoryRepository {
 	
 	private DBConnectionMgr pool;
-	private static ProductColorRepository instance;
+	private static ProductCategoryRepository instance;
 	
-	private ProductColorRepository() {
+	private ProductCategoryRepository() {
 		pool = DBConnectionMgr.getInstance();
 	}
 	
-	public static ProductColorRepository getInstance() {
+	public static ProductCategoryRepository getInstance() {
 		if(instance == null) {
-			instance = new ProductColorRepository();
+			instance = new ProductCategoryRepository();
 		}
+		
 		return instance;
 	}
 	
-	public List<ProductColor> getProductColorListAll() {
+	public List<ProductCategory> getProductCategoryListAll() {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		List<ProductColor> productColorList = null;
+		List<ProductCategory> productCategoryList = null;
 		
 		try {
 			con = pool.getConnection();
 			String sql = "select "
-					+ "product_color_id, "
-					+ "product_color_name "
+					+ "product_category_id, "
+					+ "product_category_name "
 					+ "from "
-					+ "product_color_tb "
+					+ "product_category_tb "
 					+ "order by "
-					+ "product_color_name";
+					+ "product_category_name";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
-			productColorList = new ArrayList<>();
+			productCategoryList = new ArrayList<>();
 			
 			while(rs.next()) {
-				ProductColor productColor = ProductColor.builder()
-						.productColorId(rs.getInt(1))
-						.productColorName(rs.getString(2))
+				ProductCategory productCategory = ProductCategory.builder()
+						.productCategoryId(rs.getInt(1))
+						.productCategoryName(rs.getString(2))
 						.build();
 				
-				productColorList.add(productColor);
+				productCategoryList.add(productCategory);
 			}
 			
 		} catch (Exception e) {
@@ -63,57 +63,57 @@ public class ProductColorRepository {
 		}
 		
 		
-		return productColorList;
+		return productCategoryList;
 	}
 	
-	public ProductColor findProductColorByProductColorName(String productColorName) {
+	public ProductCategory findProductCategoryByProductCategoryName(String productCategoryName) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		ProductColor productColor = null;
+		ProductCategory productCategory = null;
 		
 		try {
 			con = pool.getConnection();
 			String sql = "select "
-					+ "product_color_id, "
-					+ "product_color_name "
+					+ "product_category_id "
+					+ "product_category_name "
 					+ "from "
-					+ "product_color_tb "
+					+ "product_category_tb "
 					+ "where "
-					+ "product_color_name = ?";
+					+ "product_category_name = ?";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, productColorName);
+			pstmt.setString(1, productCategoryName);
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				productColor = ProductColor.builder()
-						.productColorId(rs.getInt(1))
-						.productColorName(rs.getString(2))
+				productCategory = ProductCategory.builder()
+						.productCategoryId(rs.getInt(1))
+						.productCategoryName(rs.getString(2))
 						.build();
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con, pstmt, rs);
+			pool.freeConnection(con, pstmt);
 		}
 		
-		return productColor;
+		return productCategory;
 	}
 	
-	public int saveProductColor(ProductColor productColor) {
+	public int saveProductCategory(ProductCategory productCategory) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		int successCount = 0;
 		
 		try {
 			con = pool.getConnection();
-			String sql = "insert into product_color_tb values(0, ?)";
+			String sql = "insert into product_category_tb values(0, ?)";
 			
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, productColor.getProductColorName());
+			pstmt.setString(1, productCategory.getProductCategoryName());
 			successCount = pstmt.executeUpdate();
-					
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -122,4 +122,5 @@ public class ProductColorRepository {
 		
 		return successCount;
 	}
+	
 }

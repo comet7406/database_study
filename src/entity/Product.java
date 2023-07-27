@@ -8,7 +8,10 @@ import lombok.Data;
 public class Product {
 	private int productId;
 	private String productName;
-	private String productPrice;
+	private int productPrice;
 	private int productColorId;
 	private int productCategoryId;
+	
+	private ProductColor productColor;
+	private ProductCategory productCategory;
 }
