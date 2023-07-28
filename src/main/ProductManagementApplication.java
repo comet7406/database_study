@@ -6,11 +6,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import frame.ProductCategoryRegisterFrame;
+import frame.ProductColorRegisterFrame;
 import frame.ProductRegisterFrame;
+import frame.ProductSearchFrame;
 
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ProductManagementApplication extends JFrame {
 
@@ -52,11 +57,42 @@ public class ProductManagementApplication extends JFrame {
 				productRegisterFrame.setVisible(true);
 			}
 		});
-		productRegisterFrameOpenButton.setBounds(77, 125, 97, 23);
+		productRegisterFrameOpenButton.setBounds(11, 94, 410, 34);
 		contentPane.add(productRegisterFrameOpenButton);
 		
-		JButton productListFrameOpenButton = new JButton("상품조회");
-		productListFrameOpenButton.setBounds(237, 125, 97, 23);
-		contentPane.add(productListFrameOpenButton);
+		JButton productSearchFrameOpenButton = new JButton("상품조회");
+		productSearchFrameOpenButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ProductSearchFrame productSearchFrame = ProductSearchFrame.getInstance();
+				productSearchFrame.setVisible(true);
+			}
+		});
+		
+		productSearchFrameOpenButton.setBounds(11, 50, 410, 34);
+		contentPane.add(productSearchFrameOpenButton);
+		
+		JButton productColorRegisterFrameOpenButton = new JButton("상품색상등록");
+		productColorRegisterFrameOpenButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ProductColorRegisterFrame productColorRegisterFrame = new ProductColorRegisterFrame();
+				productColorRegisterFrame.setVisible(true);
+			}
+		});
+
+		productColorRegisterFrameOpenButton.setBounds(11, 138, 410, 34);
+		contentPane.add(productColorRegisterFrameOpenButton);
+		
+		JButton productCategoryRegisterFrameOpenButton = new JButton("상품카테고리등록");
+		productCategoryRegisterFrameOpenButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ProductCategoryRegisterFrame productCategoryRegisterFrame = new ProductCategoryRegisterFrame();
+				productCategoryRegisterFrame.setVisible(true);
+			}
+		});
+		productCategoryRegisterFrameOpenButton.setBounds(11, 182, 410, 34);
+		contentPane.add(productCategoryRegisterFrameOpenButton);
 	}
 }

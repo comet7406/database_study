@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import entity.ProductCategory;
-import service.ProductCateogryService;
+import service.ProductCategoryService;
 import utils.CustomSwingTextUtil;
 
 import javax.swing.JLabel;
@@ -73,7 +73,7 @@ public class ProductCategoryRegisterFrame extends JFrame {
 				String productCategoryName = productCategoryNameTextField.getText();
 				
 				if(CustomSwingTextUtil.isTextEmpty(contentPane, productCategoryName)) { return; }
-				if(ProductCateogryService.getInstance().isProductCategoryNameDuplicated(productCategoryName)) {
+				if(ProductCategoryService.getInstance().isProductCategoryNameDuplicated(productCategoryName)) {
 					JOptionPane.showMessageDialog(contentPane, "이미 존재하는 카테고리명입니다.", "중복오류", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -81,7 +81,7 @@ public class ProductCategoryRegisterFrame extends JFrame {
 						.productCategoryName(productCategoryName)
 						.build();
 				
-				if(!ProductCateogryService.getInstance().registerProductCategory(productCategory)) {
+				if(!ProductCategoryService.getInstance().registerProductCategory(productCategory)) {
 					JOptionPane.showMessageDialog(contentPane, "카테고리등록 중 오류가 발생하였습니다.", "등록오류", JOptionPane.ERROR_MESSAGE);
 					return;
 				}

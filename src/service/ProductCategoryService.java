@@ -6,27 +6,27 @@ import java.util.List;
 import entity.ProductCategory;
 import repository.ProductCategoryRepository;
 
-public class ProductCateogryService {
+public class ProductCategoryService {
 	
 	private ProductCategoryRepository productCategoryRepository;
-	private static ProductCateogryService instance;
+	private static ProductCategoryService instance;
 	
-	private ProductCateogryService() {
+	private ProductCategoryService() {
 		productCategoryRepository = ProductCategoryRepository.getInstance();
 	}
 	
-	public static ProductCateogryService getInstance() {
+	public static ProductCategoryService getInstance() {
 		if(instance == null) {
-			instance = new ProductCateogryService();
-		}		
+			instance = new ProductCategoryService();
+		}
 		return instance;
 	}
 	
 	public List<String> getProductCategoryNameList() {
 		List<String> productCategoryNameList = new ArrayList<>();
 		
-		productCategoryRepository.getProductCategoryListAll().forEach(productColor -> {
-			productCategoryNameList.add(productColor.getProductCategoryName());
+		productCategoryRepository.getProductCategoryListAll().forEach(productCategory -> {
+			productCategoryNameList.add(productCategory.getProductCategoryName());
 		});
 		
 		return productCategoryNameList;
