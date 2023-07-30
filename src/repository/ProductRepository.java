@@ -181,71 +181,58 @@ public class ProductRepository {
 	
 	public List<Product> getSearchProductList(String searchOption, String searchValue) {
 		Connection con = null;
-		PreparedStatement pstmt = null;
+		CallableStatement cstmt = null;
 		ResultSet rs = null;
 		List<Product> productList = null;
 		
 		try {
 			con = pool.getConnection();
-			String sql = "select\r\n"
-					+ "	pt.product_id,\r\n"
-					+ "    pt.product_name,\r\n"
-					+ "    pt.product_price,\r\n"
-					+ "    \r\n"
-					+ "    pt.product_color_id,\r\n"
-					+ "    pcot.product_color_name,\r\n"
-					+ "    \r\n"
-					+ "    pt.product_category_id,\r\n"
-					+ "    pcat.product_category_name\r\n"
-					+ "from\r\n"
-					+ "	product_tb pt\r\n"
-					+ "    left outer join product_color_tb pcot \r\n"
-					+ "		on(pcot.product_color_id = pt.product_color_id)\r\n"
-					+ "    left outer join product_category_tb pcat \r\n"
-					+ "		on(pcat.product_category_id = pt.product_category_id)\r\n"
-					+ "where\r\n"
-					+ "	1 = 1 ";
+			String sql = " { call p_search_product (?, ?) }";
 			
-			if(searchValue != null) {
-				if(!searchValue.isBlank()) {
-					String whereSql = null;
-					
-					switch (searchOption) {
-						case "전체":
-							whereSql = "and (pt.product_name like concat('%', ?, '%') "
-									+ "or pcot.product_color_name like concat('%', ?, '%') "
-									+ "or pcat.product_category_name like concat('%', ?, '%'))";
-							break;
-						case "상품명":
-							whereSql = "and pt.product_name like concat('%', ?, '%')";
-							break;
-						case "색상":
-							whereSql = "and pcot.product_color_name like concat('%', ?, '%')";
-							break;
-						case "카테고리":
-							whereSql = "and pcat.product_category_name like concat('%', ?, '%')";
-							break;
-					}
-					
-					sql += whereSql;
-				}
-			}
+			cstmt = con.prepareCall(sql);
+			cstmt.setString(1, searchOption);
+			cstmt.setString(2, searchValue);
 			
-			pstmt = con.prepareStatement(sql);	
+			rs = cstmt.executeQuery();
 			
-			if(searchValue != null) {
-				if(!searchValue.isBlank()) {
-					if(searchOption.equals("전체")) {
-						pstmt.setString(1, searchValue);
-						pstmt.setString(2, searchValue);
-						pstmt.setString(3, searchValue);
-					} else {
-						pstmt.setString(1, searchValue);
-					}
-				}
-			}
+//			if(searchValue != null) {
+//				if(!searchValue.isBlank()) {					
+//					String whereSql = null;					
+//					switch (searchOption) {
+//					
+//						case "전체":
+//							whereSql = "and (pt.product_name like concat('%', ?, '%') "
+//									+ "or pcot.product_color_name like concat('%', ?, '%') "
+//									+ "or pcat.product_category_name like concat('%', ?, '%'))";
+//							
+//							break;
+//						case "상품명":
+//							whereSql = "and pt.product_name like concat('%', ?, '%')";
+//							break;
+//						case "색상":
+//							whereSql = "and pcot.product_color_name like concat('%', ?, '%')";
+//							break;
+//						case "카테고리":
+//							whereSql = "and pcat.product_category_name like concat('%', ?, '%')";
+//							break;
+//					}
+//					
+//					sql += whereSql;
+//				}
+//			}
 			
-			rs = pstmt.executeQuery();
+//			if(searchValue != null) {
+//				if(!searchValue.isBlank()) {
+//					if(searchOption.equals("전체")) {
+//						cstmt.setString(1, searchValue);
+//						cstmt.setString(2, searchValue);
+//						cstmt.setString(3, searchValue);
+//					} else {
+//						cstmt.setString(1, searchValue);
+//					}
+//				}
+//			}
+			
 			productList = new ArrayList<>();
 			
 			while(rs.next()) {
@@ -275,7 +262,7 @@ public class ProductRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con, pstmt, rs);
+			pool.freeConnection(con, cstmt, rs);
 		}
 		
 		return productList;
